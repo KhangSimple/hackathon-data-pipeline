@@ -1,4 +1,5 @@
 from airflow import DAG
+from airflow.decorators import dag, task
 
 # from airflow.sdk import dag, task
 from airflow.operators.python import PythonOperator
@@ -27,7 +28,7 @@ configs = {
     "orders": {},
     "users": {},
     # "customers": {},
-    # "products": {},
+    "products": {},
 }
 
 default_args = {
@@ -41,26 +42,24 @@ default_args = {
 current_date = datetime.now().strftime("%Y%m%d")
 ingestion_date = datetime.now().strftime("%Y-%m-%d")
 
-for table_name in configs.keys():
-    dag_id = f"dag_pipeline_for_{table_name}"
-    constlib = importlib.import_module(f"const.{table_name}_const")
 
-    # raw_table_name = getattr(constlib, "RAW_TABLE_NAME")
-    # stg_table_name = getattr(constlib, "STG_TABLE_NAME")
-    # mart_table_name = getattr(constlib, "MART_TABLE_NAME")
-    postgres_query = getattr(constlib, "POSTGRES_QUERY_RAW_DATA")
-    transform_query_standardize = getattr(constlib, "TRANSFORM_QUERY_STANDARDIZE")
-    mart_query_fact = getattr(constlib, "MART_QUERY_FACT")
-    query_delete_old_n_days_data = getattr(constlib, "QUERY_DELETE_OLD_N_DAYS_DATA")
-    n_days = getattr(constlib, "N_DAYS_EXPRIRED")
-    schema_fields = getattr(constlib, "SCHEMA_FIELDS")
-
-    with DAG(
+def create_dag(dag_id: str, table_name: str):
+    @dag(
         dag_id=dag_id,
         start_date=default_args["start_date"],
         schedule_interval="@daily",
         catchup=False,
-    ) as dag:
+    )
+    def pipeline_dim_dag():
+        constlib = importlib.import_module(f"const.{table_name}_const")
+
+        postgres_query = getattr(constlib, "POSTGRES_QUERY_RAW_DATA")
+        transform_query_standardize = getattr(constlib, "TRANSFORM_QUERY_STANDARDIZE")
+        mart_query_fact = getattr(constlib, "MART_QUERY_FACT")
+        query_delete_old_n_days_data = getattr(constlib, "QUERY_DELETE_OLD_N_DAYS_DATA")
+        n_days = getattr(constlib, "N_DAYS_EXPRIRED")
+        schema_fields = getattr(constlib, "SCHEMA_FIELDS")
+
         export_postgres_to_gcs = PostgresToGCSOperator(
             task_id="export_postgres_data_to_gcs",
             postgres_conn_id=POSTGRES_CONN_ID,
@@ -145,3 +144,12 @@ for table_name in configs.keys():
             >> bq_data_mart
             >> delete_data_exprired_n_days
         )
+
+    generated_dag = pipeline_dim_dag()
+
+    return generated_dag
+
+
+for table_name in configs.keys():
+    dag_id = f"dag_pipeline_for_{table_name}"
+    globals()[dag_id] = create_dag(dag_id, table_name)
