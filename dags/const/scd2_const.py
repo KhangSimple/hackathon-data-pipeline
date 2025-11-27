@@ -30,15 +30,9 @@ def generate_get_data_postgres_query(table_name, schema_postgres_fields):
 
 
 def generate_transform_raw_data_query(table_name, schema_postgres_fields):
-    query = f"""CREATE TABLE IF NOT EXISTS {BQ_PROJECT_ID}.{BQ_STG_DATASET_NAME}.{table_name}_standardized
-        (
-            {','.join([f"{field_detail['name']} {field_detail['type']} {field_detail['mode'] if field_detail['mode'] == 'NOT NULL' else ''}"
-                       for field_detail in schema_postgres_fields])}
-        );\n
+    query = f"""CREATE OR REPLACE TABLE IF NOT EXISTS {BQ_PROJECT_ID}.{BQ_STG_DATASET_NAME}.{table_name}_standardized
+        SELECT 
     """
-
-    query += f"""INSERT INTO {BQ_PROJECT_ID}.{BQ_STG_DATASET_NAME}.{table_name}_standardized 
-        SELECT """
     query += ",\n".join(
         [
             (
@@ -48,8 +42,7 @@ def generate_transform_raw_data_query(table_name, schema_postgres_fields):
         ]
     )
     query += f" FROM {BQ_PROJECT_ID}.{BQ_RAW_DATASET_NAME}.{table_name}"
-    query += """ WHERE ingestion_date = '{ingestion_date}'
-    QUALIFY ROW_NUMBER() OVER(PARTITION BY {partition_columns} ORDER BY {order_columns} DESC) = 1"""
+    query += """QUALIFY ROW_NUMBER() OVER(PARTITION BY {partition_columns} ORDER BY {order_columns} DESC) = 1"""
 
     return query
 
@@ -62,7 +55,7 @@ def generate_data_mart_query(table_name, schema_postgres_fields, pk_columns):
         ]
     )
 
-    create_table_query = f"""CREATE TABLE IF NOT EXISTS {BQ_PROJECT_ID}.{BQ_MART_DATASET_NAME}.dm_fact_{table_name}
+    create_table_query = f"""CREATE TABLE IF NOT EXISTS {BQ_PROJECT_ID}.{BQ_MART_DATASET_NAME}.dm_dim_{table_name}
         (
             {table_name}_sk STRING NOT NULL,
             {','.join([f"{field_detail['name']} {field_detail['type']} {field_detail['mode'] if field_detail['mode'] == 'NOT NULL' else ''}"
@@ -74,7 +67,7 @@ def generate_data_mart_query(table_name, schema_postgres_fields, pk_columns):
         );
     """
     merge_query = f"""
-        MERGE INTO `{BQ_PROJECT_ID}.{BQ_MART_DATASET_NAME}.dm_fact_{table_name}` AS dim
+        MERGE INTO `{BQ_PROJECT_ID}.{BQ_MART_DATASET_NAME}.dm_dim_{table_name}` AS dim
         USING (
         SELECT * FROM `{BQ_PROJECT_ID}.{BQ_STG_DATASET_NAME}.{table_name}_standardized` WHERE ingestion_date = '{{ingestion_date}}'
         ) AS stg
@@ -86,14 +79,14 @@ def generate_data_mart_query(table_name, schema_postgres_fields, pk_columns):
     """
 
     insert_query = f"""
-        INSERT INTO `{BQ_PROJECT_ID}.{BQ_MART_DATASET_NAME}.dm_fact_{table_name}`
+        INSERT INTO `{BQ_PROJECT_ID}.{BQ_MART_DATASET_NAME}.dm_dim_{table_name}`
         ({table_name}_sk, {', '.join([field_detail['name'] for field_detail in schema_postgres_fields])}, effective_from, effective_to, is_current, dw_inserted_at)
         SELECT GENERATE_UUID(), {', '.join([f"stg.{field_detail['name']}" for field_detail in schema_postgres_fields])},
             CURRENT_TIMESTAMP(), NULL, TRUE, CURRENT_TIMESTAMP()
         FROM `{BQ_PROJECT_ID}.{BQ_STG_DATASET_NAME}.{table_name}_standardized` stg
         WHERE NOT EXISTS
         (
-            SELECT * from `{BQ_PROJECT_ID}.{BQ_MART_DATASET_NAME}.dm_fact_{table_name}` dim
+            SELECT * from `{BQ_PROJECT_ID}.{BQ_MART_DATASET_NAME}.dm_dim_{table_name}` dim
             WHERE {" AND ".join([f'dim.{col} = stg.{col}' for col in pk_columns])}
             AND NOT (
                 {query_diff_condition}
