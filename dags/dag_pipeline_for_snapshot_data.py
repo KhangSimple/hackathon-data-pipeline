@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
 from airflow import DAG
 
 # from airflow.sdk import dag, task
@@ -24,10 +28,7 @@ from datetime import datetime
 import importlib
 
 configs = {
-    "orders": {},
-    "users": {},
-    # "customers": {},
-    # "products": {},
+    "inventory": {},
 }
 
 default_args = {
@@ -42,17 +43,12 @@ current_date = datetime.now().strftime("%Y%m%d")
 ingestion_date = datetime.now().strftime("%Y-%m-%d")
 
 for table_name in configs.keys():
-    dag_id = f"dag_pipeline_for_{table_name}"
+    dag_id = f"dag_pipeline_for_snapshot_{table_name}"
     constlib = importlib.import_module(f"const.{table_name}_const")
 
-    # raw_table_name = getattr(constlib, "RAW_TABLE_NAME")
-    # stg_table_name = getattr(constlib, "STG_TABLE_NAME")
-    # mart_table_name = getattr(constlib, "MART_TABLE_NAME")
     postgres_query = getattr(constlib, "POSTGRES_QUERY_RAW_DATA")
     transform_query_standardize = getattr(constlib, "TRANSFORM_QUERY_STANDARDIZE")
     mart_query_fact = getattr(constlib, "MART_QUERY_FACT")
-    query_delete_old_n_days_data = getattr(constlib, "QUERY_DELETE_OLD_N_DAYS_DATA")
-    n_days = getattr(constlib, "N_DAYS_EXPRIRED")
     schema_fields = getattr(constlib, "SCHEMA_FIELDS")
 
     with DAG(
@@ -96,7 +92,6 @@ for table_name in configs.keys():
                         STG_TABLE_NAME=f"{table_name}_standardized",
                         BQ_RAW_DATASET_NAME=BQ_RAW_DATASET_NAME,
                         RAW_TABLE_NAME=table_name,
-                        ingestion_date=ingestion_date,
                     ),
                     "useLegacySql": False,
                 }
@@ -110,28 +105,10 @@ for table_name in configs.keys():
                     "query": mart_query_fact.format(
                         BQ_PROJECT_ID=BQ_PROJECT_ID,
                         BQ_MART_DATASET_NAME=BQ_MART_DATASET_NAME,
-                        MART_TABLE_NAME=f"dm_dim_{table_name}",
+                        MART_TABLE_NAME=f"dm_fact_{table_name}",
                         BQ_STG_DATASET_NAME=BQ_STG_DATASET_NAME,
                         STG_TABLE_NAME=f"{table_name}_standardized",
-                        ingestion_date=ingestion_date,
-                    ),
-                    "useLegacySql": False,
-                }
-            },
-        )
-
-        delete_data_exprired_n_days = BigQueryInsertJobOperator(
-            task_id="delete_data_exprired_n_days",
-            configuration={
-                "query": {
-                    "query": query_delete_old_n_days_data.format(
-                        BQ_PROJECT_ID=BQ_PROJECT_ID,
-                        BQ_STG_DATASET_NAME=BQ_STG_DATASET_NAME,
-                        STG_TABLE_NAME=f"{table_name}_standardized",
-                        BQ_RAW_DATASET_NAME=BQ_RAW_DATASET_NAME,
-                        RAW_TABLE_NAME=table_name,
                         current_date=ingestion_date,
-                        n_days=n_days,
                     ),
                     "useLegacySql": False,
                 }
@@ -143,5 +120,4 @@ for table_name in configs.keys():
             >> export_gcs_to_bq
             >> transform_bq_data_standardize
             >> bq_data_mart
-            >> delete_data_exprired_n_days
         )

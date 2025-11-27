@@ -82,14 +82,14 @@ QUERY_DELETE_OLD_N_DAYS_DATA = """
 """
 
 SCHEMA_FIELDS = [
-    {"name": "user_id", "type": "STRING", "mode": "NOT NULL"},
-    {"name": "email", "type": "STRING", "mode": "NOT NULL"},
-    {"name": "full_name", "type": "STRING", "mode": "NOT NULL"},
+    {"name": "user_id", "type": "STRING", "mode": "REQUIRED"},
+    {"name": "email", "type": "STRING", "mode": "REQUIRED"},
+    {"name": "full_name", "type": "STRING", "mode": "REQUIRED"},
     {"name": "phone", "type": "STRING", "mode": "NULLABLE"},
     {"name": "address", "type": "STRING", "mode": "NULLABLE"},
     {"name": "created_at", "type": "STRING", "mode": "NULLABLE"},
     {"name": "updated_at", "type": "STRING", "mode": "NULLABLE"},
-    {"name": "role_id", "type": "STRING", "mode": "NOT NULL"},
-    {"name": "is_active", "type": "STRING", "mode": "NOT NULL"},
+    {"name": "role_id", "type": "STRING", "mode": "REQUIRED"},
+    {"name": "is_active", "type": "STRING", "mode": "REQUIRED"},
     {"name": "ingestion_date", "type": "STRING", "mode": "NULLABLE"},
 ]
