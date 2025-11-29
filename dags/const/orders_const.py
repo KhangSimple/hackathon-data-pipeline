@@ -2,7 +2,8 @@
 # STG_TABLE_NAME = "orders_standardized"
 # MART_TABLE_NAME = "dm_fact_orders"
 # N_DAYS_EXPRIRED = 3
-PK_COLUMNS = ["order_id", "ingestion_date"]
+PK_COLUMNS = ["order_id"]
+SK_COLUMNS = ["users_sk"]
 ORDER_COLUMNS = "updated_at"
 
 SCHEMA_POSTGRES_FIELDS = [
@@ -25,6 +26,18 @@ SCHEMA_FIELDS = [
     {"name": "created_at", "type": "STRING", "mode": "NULLABLE"},
     {"name": "updated_at", "type": "STRING", "mode": "NULLABLE"},
     {"name": "ingestion_date", "type": "STRING", "mode": "NULLABLE"},
+]
+
+MART_SCHEMA_FIELDS = [
+    {"name": "order_sk", "type": "STRING", "mode": "NULLABLE"},
+    {"name": "order_id", "type": "STRING", "mode": "NULLABLE"},
+    {"name": "status", "type": "STRING", "mode": "NULLABLE"},
+    {"name": "order_total", "type": "FLOAT64", "mode": "NULLABLE"},
+    {"name": "currency", "type": "STRING", "mode": "NULLABLE"},
+    {"name": "created_at", "type": "TIMESTAMP", "mode": "NULLABLE"},
+    {"name": "updated_at", "type": "TIMESTAMP", "mode": "NULLABLE"},
+    {"name": "dw_inserted_at", "type": "TIMESTAMP", "mode": "NULLABLE"},
+    {"name": "users_sk", "type": "STRING", "mode": "NULLABLE"},
 ]
 
 # QUERY_DELETE_OLD_N_DAYS_DATA = """

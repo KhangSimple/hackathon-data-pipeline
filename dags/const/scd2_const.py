@@ -30,7 +30,7 @@ def generate_get_data_postgres_query(table_name, schema_postgres_fields):
 
 
 def generate_transform_raw_data_query(table_name, schema_postgres_fields):
-    query = f"""CREATE OR REPLACE TABLE IF NOT EXISTS {BQ_PROJECT_ID}.{BQ_STG_DATASET_NAME}.{table_name}_standardized
+    query = f"""CREATE OR REPLACE TABLE {BQ_PROJECT_ID}.{BQ_STG_DATASET_NAME}.{table_name}_standardized AS
         SELECT 
     """
     query += ",\n".join(
@@ -42,7 +42,7 @@ def generate_transform_raw_data_query(table_name, schema_postgres_fields):
         ]
     )
     query += f" FROM {BQ_PROJECT_ID}.{BQ_RAW_DATASET_NAME}.{table_name}"
-    query += """QUALIFY ROW_NUMBER() OVER(PARTITION BY {partition_columns} ORDER BY {order_columns} DESC) = 1"""
+    query += """ QUALIFY ROW_NUMBER() OVER(PARTITION BY {partition_columns} ORDER BY {order_columns} DESC) = 1"""
 
     return query
 

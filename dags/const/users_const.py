@@ -3,7 +3,7 @@
 # MART_TABLE_NAME = "dm_dim_users"
 N_DAYS_EXPRIRED = 3
 
-PK_COLUMNS = ["user_id", "ingestion_date"]
+PK_COLUMNS = ["user_id"]
 ORDER_COLUMNS = "updated_at"
 
 SCHEMA_POSTGRES_FIELDS = [

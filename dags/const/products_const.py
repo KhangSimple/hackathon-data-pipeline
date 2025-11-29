@@ -1,7 +1,7 @@
 RAW_TABLE_NAME = "products"
 STG_TABLE_NAME = "products_standardized"
 MART_TABLE_NAME = "dm_fact_products"
-PK_COLUMNS = "product_id"
+PK_COLUMNS = ["product_id"]
 ORDER_COLUMNS = "updated_at"
 
 SCHEMA_POSTGRES_FIELDS = [

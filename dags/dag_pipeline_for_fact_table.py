@@ -29,6 +29,12 @@ import importlib
 
 configs = {
     "orders": {},
+    # "order_items": {},
+    # "payments": {},
+    # "shipments": {},
+    # "reviews": {},
+    # "carts": {},
+    # "cart_items": {},
 }
 
 default_args = {
@@ -56,6 +62,8 @@ def create_dag(dag_id: str, table_name: str):
         schema_fields = getattr(constlib, "SCHEMA_FIELDS")
         schema_postgres_fields = getattr(constlib, "SCHEMA_POSTGRES_FIELDS")
         pk_columns = getattr(constlib, "PK_COLUMNS")
+        sk_columns = getattr(constlib, "SK_COLUMNS")
+        mart_schema_fields = getattr(constlib, "MART_SCHEMA_FIELDS")
         order_columns = getattr(constlib, "ORDER_COLUMNS")
         postgres_query = generate_get_data_postgres_query(
             table_name, schema_postgres_fields
@@ -64,7 +72,11 @@ def create_dag(dag_id: str, table_name: str):
             table_name, schema_postgres_fields
         )
         data_mark_query = generate_data_mart_query(
-            table_name, schema_postgres_fields, pk_columns
+            table_name,
+            schema_postgres_fields,
+            pk_columns,
+            sk_columns,
+            mart_schema_fields,
         )
 
         export_postgres_to_gcs = PostgresToGCSOperator(
