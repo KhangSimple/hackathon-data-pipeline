@@ -34,7 +34,7 @@ configs = {
     "shipment": {},
     "product_review": {},
     "cart": {},
-    # "cart_items": {},
+    "cart_item": {},
 }
 
 default_args = {
