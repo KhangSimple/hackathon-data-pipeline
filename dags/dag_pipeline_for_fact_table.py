@@ -33,7 +33,7 @@ configs = {
     "payment": {},
     "shipment": {},
     "product_review": {},
-    # "carts": {},
+    "cart": {},
     # "cart_items": {},
 }
 
