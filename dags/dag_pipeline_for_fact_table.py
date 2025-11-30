@@ -31,7 +31,7 @@ configs = {
     "order": {},
     "order_item": {},
     "payment": {},
-    # "shipments": {},
+    "shipment": {},
     "product_review": {},
     # "carts": {},
     # "cart_items": {},
