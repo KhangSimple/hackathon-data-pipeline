@@ -19,7 +19,7 @@ def generate_get_data_postgres_query(table_name, schema_postgres_fields):
             for field_detail in schema_postgres_fields
         ]
     )
-    query += f" FROM {table_name}"
+    query += f" FROM public.{table_name}"
     return query
 
     # query = f"""CREATE TABLE IF NOT EXISTS {BQ_PROJECT_ID}.{BQ_RAW_DATASET_NAME}.{table_name}

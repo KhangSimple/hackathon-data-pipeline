@@ -19,7 +19,7 @@ def generate_get_data_postgres_query(table_name, schema_postgres_fields):
             for field_detail in schema_postgres_fields
         ]
     )
-    query += f" FROM {table_name}"
+    query += f" FROM public.{table_name}"
     return query
 
 
@@ -62,8 +62,8 @@ def generate_data_mart_query(table_name, schema_postgres_fields, pk_columns):
         UPDATE SET
             {mapping_query}, dim.dw_inserted_at = CURRENT_TIMESTAMP()
         WHEN NOT MATCHED THEN
-        INSERT ({', '.join([field_detail['name'] for field_detail in schema_postgres_fields])}, dw_inserted_at)
-        VALUES ({insert_query}, CURRENT_TIMESTAMP())
+        INSERT ({table_name}_sk, {', '.join([field_detail['name'] for field_detail in schema_postgres_fields])}, dw_inserted_at)
+        VALUES (GENERATE_UUID(), {insert_query}, CURRENT_TIMESTAMP())
     """
 
     return query

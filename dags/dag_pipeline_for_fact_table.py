@@ -28,8 +28,8 @@ from datetime import datetime
 import importlib
 
 configs = {
-    "orders": {},
-    # "order_items": {},
+    "order": {},
+    "order_item": {},
     # "payments": {},
     # "shipments": {},
     # "reviews": {},
@@ -62,6 +62,7 @@ def create_dag(dag_id: str, table_name: str):
         schema_fields = getattr(constlib, "SCHEMA_FIELDS")
         schema_postgres_fields = getattr(constlib, "SCHEMA_POSTGRES_FIELDS")
         pk_columns = getattr(constlib, "PK_COLUMNS")
+        sk_tables = getattr(constlib, "SK_TABLES")
         sk_columns = getattr(constlib, "SK_COLUMNS")
         mart_schema_fields = getattr(constlib, "MART_SCHEMA_FIELDS")
         order_columns = getattr(constlib, "ORDER_COLUMNS")
@@ -77,6 +78,7 @@ def create_dag(dag_id: str, table_name: str):
             pk_columns,
             sk_columns,
             mart_schema_fields,
+            sk_tables,
         )
 
         export_postgres_to_gcs = PostgresToGCSOperator(

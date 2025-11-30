@@ -19,7 +19,7 @@ def generate_get_data_postgres_query(table_name, schema_postgres_fields):
             for field_detail in schema_postgres_fields
         ]
     )
-    query += f" FROM {table_name}"
+    query += f" FROM public.{table_name}"
     return query
 
 
@@ -43,7 +43,12 @@ SELECT
 
 
 def generate_data_mart_query(
-    table_name, schema_postgres_fields, pk_columns, sk_columns, mart_schema_fields
+    table_name,
+    schema_postgres_fields,
+    pk_columns,
+    sk_columns,
+    mart_schema_fields,
+    sk_tables,
 ):
     schema_except_ingestion_date = [
         x for x in schema_postgres_fields if x["name"] != "ingestion_date"
@@ -53,24 +58,25 @@ def generate_data_mart_query(
         x
         for x in schema_except_ingestion_date
         if x["name"] not in pk_columns
-        and x["name"] not in [f"{col[:-4]}_id" for col in sk_columns]
+        and x["name"] not in [table["joined_col"] for table in sk_tables]
     ]
 
     get_stg_cols = ", ".join(
         [f"stg.{field_detail['name']}" for field_detail in schema_except_ingestion_date]
     )
 
-    get_sk_cols = ", ".join([f"{col[:-3]}.{col}" for col in sk_columns])
-
-    left_join_tb = "\n".join(
+    get_sk_cols = ", ".join(
         [
-            f"LEFT JOIN (SELECT * FROM `{BQ_PROJECT_ID}.{BQ_MART_DATASET_NAME}.dm_dim_{col[:-3]}` WHERE is_current) AS {col[:-3]}"
-            for col in sk_columns
+            f"{table['table']}.{table['joined_col'].replace('id', 'sk')}"
+            for table in sk_tables
         ]
     )
 
-    join_conditions = " AND ".join(
-        [f"stg.{col[:-4]}_id = {col[:-3]}.{col[:-4]}_id" for col in sk_columns]
+    left_join_tb = "\n".join(
+        [
+            f"LEFT JOIN (SELECT * FROM `{BQ_PROJECT_ID}.{BQ_MART_DATASET_NAME}.{table['table']}` WHERE {'is_current' if 'dim' in table['table'] else 'true'}) AS {table['table']} USING ({table['joined_col']})"
+            for table in sk_tables
+        ]
     )
 
     update_value = ", ".join(
@@ -85,7 +91,6 @@ def generate_data_mart_query(
         {get_sk_cols}
     FROM `{BQ_PROJECT_ID}.{BQ_STG_DATASET_NAME}.{table_name}_standardized` stg
     {left_join_tb}
-        ON {join_conditions}
     ) AS src
     ON fact.{pk_columns[0]} = src.{pk_columns[0]}
     WHEN MATCHED THEN
@@ -97,7 +102,7 @@ def generate_data_mart_query(
     )
     VALUES (
         GENERATE_UUID(),
-        src.{', src.'.join([col['name'] for col in mart_schema_fields if col['name'] not in (f'{table_name[:-1]}_sk', 'dw_inserted_at')])},
+        src.{', src.'.join([col['name'] for col in mart_schema_fields if col['name'] not in (f'{table_name}_sk', 'dw_inserted_at')])},
         CURRENT_TIMESTAMP()
     );
     """

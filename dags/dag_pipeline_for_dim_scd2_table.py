@@ -29,9 +29,9 @@ import importlib
 
 configs = {
     # "orders": {},
-    "users": {},
-    "coupons": {},
-    "products": {},
+    "user": {},
+    "coupon": {},
+    "product": {},
 }
 
 default_args = {

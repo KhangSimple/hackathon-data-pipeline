@@ -26,7 +26,7 @@ from datetime import datetime
 import importlib
 
 configs = {
-    "categories": {},
+    "category": {},
 }
 
 default_args = {
