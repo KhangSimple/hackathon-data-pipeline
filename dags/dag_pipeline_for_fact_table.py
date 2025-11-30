@@ -30,7 +30,7 @@ import importlib
 configs = {
     "order": {},
     "order_item": {},
-    # "payments": {},
+    "payment": {},
     # "shipments": {},
     # "reviews": {},
     # "carts": {},
