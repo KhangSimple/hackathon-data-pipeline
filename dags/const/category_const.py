@@ -7,7 +7,7 @@ PK_COLUMNS = ["category_id", "ingestion_date"]
 ORDER_COLUMNS = "updated_at"
 
 SCHEMA_POSTGRES_FIELDS = [
-    {"name": "category_id", "type": "STRING", "mode": "NOT NULL"},
+    {"name": "category_id", "type": "INT64", "mode": "NOT NULL"},
     {"name": "name", "type": "STRING", "mode": "NOT NULL"},
     {"name": "parent_category_id", "type": "STRING", "mode": "NULLABLE"},
     {"name": "type", "type": "STRING", "mode": "NOT NULL"},

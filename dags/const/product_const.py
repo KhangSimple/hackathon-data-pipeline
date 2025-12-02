@@ -6,7 +6,7 @@ ORDER_COLUMNS = "updated_at"
 
 SCHEMA_POSTGRES_FIELDS = [
     {"name": "product_id", "type": "STRING", "mode": "NOT NULL"},
-    {"name": "sku", "type": "STRING", "mode": "NOT NULL"},
+    {"name": "sku", "type": "STRING", "mode": "NULLABLE"},
     {"name": "name", "type": "STRING", "mode": "NOT NULL"},
     {"name": "description", "type": "STRING", "mode": "NULLABLE"},
     {"name": "price", "type": "FLOAT64", "mode": "NOT NULL"},
@@ -22,7 +22,7 @@ SCHEMA_POSTGRES_FIELDS = [
 
 SCHEMA_FIELDS = [
     {"name": "product_id", "type": "STRING", "mode": "REQUIRED"},
-    {"name": "sku", "type": "STRING", "mode": "REQUIRED"},
+    {"name": "sku", "type": "STRING", "mode": "NULLABLE"},
     {"name": "name", "type": "STRING", "mode": "REQUIRED"},
     {"name": "description", "type": "STRING", "mode": "NULLABLE"},
     {"name": "price", "type": "STRING", "mode": "REQUIRED"},

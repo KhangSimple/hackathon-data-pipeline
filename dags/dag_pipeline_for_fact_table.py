@@ -53,7 +53,7 @@ def create_dag(dag_id: str, table_name: str):
     @dag(
         dag_id=dag_id,
         start_date=default_args["start_date"],
-        schedule_interval="@daily",
+        schedule_interval="0 1 * * *",
         catchup=False,
     )
     def pipeline_dim_dag():

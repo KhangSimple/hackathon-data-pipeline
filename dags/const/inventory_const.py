@@ -47,7 +47,7 @@ MART_QUERY_FACT = """
 SCHEMA_FIELDS = [
     {"name": "inventory_id", "type": "STRING", "mode": "REQUIRED"},
     {"name": "product_id", "type": "STRING", "mode": "REQUIRED"},
-    {"name": "warehouse_id", "type": "STRING", "mode": "REQUIRED"},
+    {"name": "warehouse_id", "type": "STRING", "mode": "NULLABLE"},
     {"name": "quantity", "type": "STRING", "mode": "NULLABLE"},
     {"name": "last_updated", "type": "STRING", "mode": "REQUIRED"},
     {"name": "ingestion_date", "type": "STRING", "mode": "NULLABLE"},

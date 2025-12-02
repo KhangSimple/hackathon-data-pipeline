@@ -16,6 +16,9 @@ SCHEMA_POSTGRES_FIELDS = [
     {"name": "updated_at", "type": "TIMESTAMP", "mode": "NULLABLE"},
     {"name": "role_id", "type": "INT64", "mode": "NOT NULL"},
     {"name": "is_active", "type": "BOOL", "mode": "NOT NULL"},
+    {"name": "date_of_birth", "type": "DATE", "mode": "NULLABLE"},
+    {"name": "job", "type": "STRING", "mode": "NULLABLE"},
+    {"name": "gender", "type": "STRING", "mode": "NULLABLE"},
     {"name": "ingestion_date", "type": "DATE", "mode": "NULLABLE"},
 ]
 
@@ -29,5 +32,8 @@ SCHEMA_FIELDS = [
     {"name": "updated_at", "type": "STRING", "mode": "NULLABLE"},
     {"name": "role_id", "type": "STRING", "mode": "REQUIRED"},
     {"name": "is_active", "type": "STRING", "mode": "REQUIRED"},
+    {"name": "date_of_birth", "type": "STRING", "mode": "NULLABLE"},
+    {"name": "job", "type": "STRING", "mode": "NULLABLE"},
+    {"name": "gender", "type": "STRING", "mode": "NULLABLE"},
     {"name": "ingestion_date", "type": "STRING", "mode": "NULLABLE"},
 ]
