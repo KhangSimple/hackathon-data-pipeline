@@ -1,4 +1,4 @@
-POSTGRES_CONN_ID = "hackathon_postgres"
+POSTGRES_CONN_ID = "cloud_postgresql"
 GCS_BUCKET = "my-hackathon"
 
 BQ_PROJECT_ID = "hackathon-478514"

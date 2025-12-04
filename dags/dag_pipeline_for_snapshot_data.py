@@ -15,7 +15,7 @@ from airflow.providers.google.cloud.transfers.gcs_to_bigquery import (
 
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 
-from const.scd2_const import (
+from dags.const.scd2_const.scd2_const import (
     POSTGRES_CONN_ID,
     GCS_BUCKET,
     BQ_PROJECT_ID,
