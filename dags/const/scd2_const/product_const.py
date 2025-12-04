@@ -17,6 +17,7 @@ SCHEMA_POSTGRES_FIELDS = [
     {"name": "sale_price", "type": "FLOAT64", "mode": "NULLABLE"},
     {"name": "category_id", "type": "INT64", "mode": "NULLABLE"},
     {"name": "product_url", "type": "STRING", "mode": "NULLABLE"},
+    {"name": "stock", "type": "INT64", "mode": "NULLABLE"},
     {"name": "ingestion_date", "type": "DATE", "mode": "NULLABLE"},
 ]
 
@@ -33,5 +34,6 @@ SCHEMA_FIELDS = [
     {"name": "sale_price", "type": "STRING", "mode": "NULLABLE"},
     {"name": "category_id", "type": "STRING", "mode": "NULLABLE"},
     {"name": "product_url", "type": "STRING", "mode": "NULLABLE"},
+    {"name": "stock", "type": "STRING", "mode": "NULLABLE"},
     {"name": "ingestion_date", "type": "STRING", "mode": "NULLABLE"},
 ]

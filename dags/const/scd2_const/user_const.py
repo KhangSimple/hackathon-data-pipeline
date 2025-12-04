@@ -19,6 +19,8 @@ SCHEMA_POSTGRES_FIELDS = [
     {"name": "date_of_birth", "type": "DATE", "mode": "NULLABLE"},
     {"name": "job", "type": "STRING", "mode": "NULLABLE"},
     {"name": "gender", "type": "STRING", "mode": "NULLABLE"},
+    {"name": "city", "type": "STRING", "mode": "NULLABLE"},
+    {"name": "country", "type": "STRING", "mode": "NULLABLE"},
     {"name": "ingestion_date", "type": "DATE", "mode": "NULLABLE"},
 ]
 
@@ -35,5 +37,7 @@ SCHEMA_FIELDS = [
     {"name": "date_of_birth", "type": "STRING", "mode": "NULLABLE"},
     {"name": "job", "type": "STRING", "mode": "NULLABLE"},
     {"name": "gender", "type": "STRING", "mode": "NULLABLE"},
+    {"name": "city", "type": "STRING", "mode": "NULLABLE"},
+    {"name": "country", "type": "STRING", "mode": "NULLABLE"},
     {"name": "ingestion_date", "type": "STRING", "mode": "NULLABLE"},
 ]
