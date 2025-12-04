@@ -12,7 +12,7 @@ from airflow.providers.google.cloud.transfers.gcs_to_bigquery import (
 
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 
-from dags.const.scd2_const.scd2_const import (
+from const.scd2_const.scd2_const import (
     POSTGRES_CONN_ID,
     GCS_BUCKET,
     BQ_PROJECT_ID,
@@ -54,7 +54,7 @@ def create_dag(dag_id: str, table_name: str):
         catchup=False,
     )
     def pipeline_dim_dag():
-        constlib = importlib.import_module(f"const.{table_name}_const")
+        constlib = importlib.import_module(f"const.scd2_const.{table_name}_const")
 
         # transform_query_standardize = getattr(constlib, "TRANSFORM_QUERY_STANDARDIZE")
         # mart_query_fact = getattr(constlib, "MART_QUERY_FACT")

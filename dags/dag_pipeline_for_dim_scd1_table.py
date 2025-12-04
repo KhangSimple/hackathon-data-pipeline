@@ -12,7 +12,7 @@ from airflow.providers.google.cloud.transfers.gcs_to_bigquery import (
 
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 
-from dags.const.scd1_const.scd1_const import (
+from const.scd1_const.scd1_const import (
     POSTGRES_CONN_ID,
     GCS_BUCKET,
     BQ_PROJECT_ID,
@@ -49,7 +49,7 @@ def create_dag(dag_id: str, table_name: str):
         catchup=False,
     )
     def pipeline_dim_dag():
-        constlib = importlib.import_module(f"const.{table_name}_const")
+        constlib = importlib.import_module(f"const.scd1_const.{table_name}_const")
 
         schema_fields = getattr(constlib, "SCHEMA_FIELDS")
         schema_postgres_fields = getattr(constlib, "SCHEMA_POSTGRES_FIELDS")

@@ -15,7 +15,7 @@ from airflow.providers.google.cloud.transfers.gcs_to_bigquery import (
 
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 
-from dags.const.scd2_const.scd2_const import (
+from const.scd2_const.scd2_const import (
     POSTGRES_CONN_ID,
     GCS_BUCKET,
     BQ_PROJECT_ID,
@@ -44,7 +44,7 @@ ingestion_date = datetime.now().strftime("%Y-%m-%d")
 
 for table_name in configs.keys():
     dag_id = f"dag_pipeline_for_snapshot_{table_name}"
-    constlib = importlib.import_module(f"const.{table_name}_const")
+    constlib = importlib.import_module(f"const.fact_const.{table_name}_const")
 
     postgres_query = getattr(constlib, "POSTGRES_QUERY_RAW_DATA")
     transform_query_standardize = getattr(constlib, "TRANSFORM_QUERY_STANDARDIZE")
