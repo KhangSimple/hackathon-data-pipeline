@@ -6,6 +6,16 @@ BQ_RAW_DATASET_NAME = "raw_ds"
 BQ_STG_DATASET_NAME = "stg_ds"
 BQ_MART_DATASET_NAME = "mart_ds"
 
+SCHEDULE_TIME = {
+    "cart": "30 0 * * *",
+    "cart_item": "0 1 * * *",
+    "order": "30 0 * * *",
+    "order_item": "0 1 * * *",
+    "payment": "0 1 * * *",
+    "product_review": "30 0 * * *",
+    "shipment": "0 1 * * *",
+}
+
 
 def generate_get_data_postgres_query(table_name, schema_postgres_fields):
     query = "SELECT "

@@ -19,6 +19,7 @@ from const.scd2_const.scd2_const import (
     BQ_RAW_DATASET_NAME,
     BQ_STG_DATASET_NAME,
     BQ_MART_DATASET_NAME,
+    SCHEDULE_TIME,
     generate_get_data_postgres_query,
     generate_transform_raw_data_query,
     generate_data_mart_query,
@@ -50,7 +51,7 @@ def create_dag(dag_id: str, table_name: str):
     @dag(
         dag_id=dag_id,
         start_date=default_args["start_date"],
-        schedule_interval="@daily",
+        schedule_interval=SCHEDULE_TIME[table_name],
         catchup=False,
     )
     def pipeline_dim_dag():
