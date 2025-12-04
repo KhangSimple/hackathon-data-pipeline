@@ -103,6 +103,9 @@ def create_dag(dag_id: str, table_name: str):
             write_disposition="WRITE_APPEND",
             skip_leading_rows=1,
             schema_fields=schema_fields,
+            ignore_unknown_values=True,
+            field_delimiter=",",
+            allow_quoted_newlines=True,
         )
 
         transform_bq_data_standardize = BigQueryInsertJobOperator(
